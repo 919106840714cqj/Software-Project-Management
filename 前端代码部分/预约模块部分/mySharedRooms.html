@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./bootstrap-4.6.1-dist/css/bootstrap.min.css">
+  <script src="./jquery-3.2.1.min.js"></script>
+  <script src="./bootstrap-4.6.1-dist/js/bootstrap.min.js"></script>
+  <title>开放实验室信息</title>
+  <style>
+    .container {
+      /* background-color: #f00; */
+      width: 800px;
+      height: 500px;
+      margin-left: 300px;
+      margin-top: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col" style="width: 100px;">序号</th>
+          <th scope="col" style="width: 100px;">实验室号码</th>
+          <th scope="col" style="width: 100px;">可用机器数量</th>
+          <th scope="col" style="width: 200px;">开放时间段</th>
+          <th scope="col" style="width: 140px;">操作</th>
+          <!-- <button onclick="todelete()">sss</button> -->
+        </tr>
+      </thead>
+      <tbody id="myRoomData">
+      </tbody>
+    </table>
+  </div>
+  <script>
+    $(document).ready(function () {
+      //获取myRoomData
+      let roomData1 = $("#myRoomData");
+      let temp1 = '';
+      username = localStorage.getItem('user')
+      console.log(username)
+      $.ajax({
+        //请求路径servlet
+        url: "http://127.0.0.1:8000/mySharedRoomInfo",
+        type: "get",
+        dataType: "json",
+        async: true,//是否异步
+        data: username,
+        //请求成功
+        success: function (msg) {
+          console.log(msg)
+          let rooms = msg;
+          roomData1.empty();//清空
+          for (let i = 0; i < rooms.length; i++) {
+            temp1 +=
+              '<tr>' +
+              '<td>' + (i + 1) + '</td>' +
+              '<td>' + rooms[i].roomId + '</td>' +
+              '<td>' + rooms[i].number + '</td>' +
+              '<td>' + rooms[i].time + '</td>' +
+              '<td>' + '<button type="submit" id="loginBtn" class="btn btn-primary btn-sm" onclick="todelete()">删除</button>' + '</td>' +
+              '</tr>';
+          }
+          roomData1.append(temp1);
+        },
+        //请求失败
+        error: function (e) {
+          alert("request failed !")
+        }
+      })
+    });
+    function todelete() {
+      $.ajax({
+        //请求路径servlet
+        url: "http://127.0.0.1:8000/mySharedRoomInfo",
+        type: "get",
+        dataType: "json",
+        async: true,//是否异步
+        data: username,
+        //请求成功
+        success: function (msg) {
+          if (data) {
+            console.log('有返回值！')
+            if(data == 'ok'){
+              alert('删除成功!')
+              location.href = 'myRooms.html'
+            }else{
+              alert('删除失败！')
+            }
+          }
+        },
+        //请求失败
+        error: function (e) {
+          alert("request failed !")
+        }
+      })
+    }
+  </script>
+</body>
+
+</html>

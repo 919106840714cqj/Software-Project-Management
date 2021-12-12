@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./bootstrap-4.6.1-dist/css/bootstrap.min.css">
+  <script src="./jquery-3.2.1.min.js"></script>
+  <script src="./bootstrap-4.6.1-dist/js/bootstrap.min.js"></script>
+  <title>系统登录</title>
+  <style>
+    .container {
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
+      /* background-color: #f00; */
+      margin-top: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <form class="needs-validation" novalidate>
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <input type="text" class="form-control" id="username" placeholder="" required>
+        <div class="invalid-feedback">
+          请输入正确的用户名
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="password">密码</label>
+        <input type="text" class="form-control" id="password" placeholder="" required>
+        <div class="invalid-feedback">
+          请输入正确的密码
+        </div>
+      </div>
+      <div class="from-group" style="padding-bottom: 10px; text-align: center;">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="0" checked>
+          <label class="form-check-label" for="exampleRadios1">
+            学生
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="1">
+          <label class="form-check-label" for="exampleRadios2">
+            教师
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="2">
+          <label class="form-check-label" for="exampleRadios3">
+            管理员
+          </label>
+        </div>
+      </div>
+      <button type="submit" id="loginBtn" class="btn btn-primary btn-block">登录</button>
+    </form>
+  </div>
+  <script>
+    (function () {
+      'use strict';
+      window.addEventListener('load', function () {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function (form) {
+          form.addEventListener('submit', function (event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+
+    $('#loginBtn').click(function () {
+      user = {
+        'name': $('#username').val(),
+        'password': $('#password').val(),
+        'role': $('input:radio:checked').val()
+      }
+      // $('input:radio:checked').val()
+      // console.log($('input:radio:checked'))
+      $.ajax({
+        type: 'POST',
+        url: 'http://127.0.0.1:8000/user',
+        data: JSON.stringify(user), // 对象转字符串
+        success: function (data) {
+          if (data) {
+            console.log('有返回值！')
+            if(data == 'ok'){
+              alert('登录成功!')
+              location.href = 'reservation.html'
+              localStorage.setItem('username', $('#username').val())
+              // console.log('!!!!!!!!')
+            }else{
+              alert('用户名或密码错误！')
+            }
+          }
+        },
+        //超时时间
+        timeout: 2000,
+        //失败的回调
+        error: function () {
+          console.log('出错啦!!');
+        },
+      })
+    })
+  </script>
+</body>
+
+</html>
